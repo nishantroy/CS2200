@@ -329,6 +329,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
     <wire from="(630,60)" to="(790,60)"/>
     <wire from="(1490,100)" to="(1490,120)"/>
     <wire from="(840,120)" to="(860,120)"/>
+    <wire from="(380,820)" to="(460,820)"/>
     <wire from="(1080,250)" to="(1110,250)"/>
     <wire from="(890,970)" to="(920,970)"/>
     <wire from="(660,760)" to="(780,760)"/>
@@ -666,6 +667,11 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="ShfA"/>
       <a name="labelfont" val="Verdana plain 10"/>
     </comp>
+    <comp lib="0" loc="(380,820)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="Clear"/>
+      <a name="labelfont" val="Verdana plain 10"/>
+    </comp>
     <comp lib="0" loc="(490,580)" name="Clock"/>
     <comp lib="0" loc="(540,260)" name="Tunnel">
       <a name="facing" val="east"/>
@@ -965,6 +971,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <text font-family="SansSerif" font-size="12" text-anchor="middle" x="163" y="254">Drive</text>
       <text font-family="SansSerif" font-size="12" text-anchor="middle" x="163" y="374">RegSel</text>
       <text font-family="SansSerif" font-size="12" text-anchor="middle" x="166" y="435">ALU</text>
+      <text font-family="SansSerif" font-size="12" text-anchor="middle" x="76" y="195">Clear</text>
       <circ-port height="8" pin="50,450" width="8" x="46" y="116"/>
       <circ-port height="8" pin="40,560" width="8" x="46" y="286"/>
       <circ-port height="10" pin="850,130" width="10" x="185" y="65"/>
@@ -972,6 +979,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <circ-port height="10" pin="850,70" width="10" x="185" y="245"/>
       <circ-port height="10" pin="850,160" width="10" x="185" y="365"/>
       <circ-port height="10" pin="850,190" width="10" x="185" y="425"/>
+      <circ-port height="8" pin="50,80" width="8" x="46" y="186"/>
       <circ-anchor facing="east" height="6" width="6" x="47" y="117"/>
     </appear>
     <wire from="(360,30)" to="(540,30)"/>
@@ -1016,6 +1024,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
     <wire from="(510,450)" to="(610,450)"/>
     <wire from="(50,340)" to="(110,340)"/>
     <wire from="(530,40)" to="(530,80)"/>
+    <wire from="(50,80)" to="(120,80)"/>
     <wire from="(550,330)" to="(550,420)"/>
     <wire from="(310,410)" to="(310,450)"/>
     <wire from="(410,440)" to="(410,480)"/>
@@ -1051,6 +1060,9 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="output" val="true"/>
       <a name="width" val="5"/>
       <a name="labelloc" val="east"/>
+    </comp>
+    <comp lib="0" loc="(50,80)" name="Pin">
+      <a name="tristate" val="false"/>
     </comp>
     <comp lib="6" loc="(173,295)" name="Text">
       <a name="text" val="Main ROM"/>
@@ -1130,7 +1142,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
 6201 1082 c00900 84044 108045 30100 84047 8408
 30100 8404a 10804b 230100 100000d 420e 840f 900
 20211 80840 84053 8414 2115 30080 4217 8418
-30100 8405a 841b 211c 40040 8405d 841e 630100
+30100 8405a 841b 211c 40040 8405e 841f 630100
 20
 </a>
     </comp>
@@ -1156,7 +1168,6 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="ChkCC"/>
       <a name="labelfont" val="Verdana plain 10"/>
     </comp>
-    <comp lib="5" loc="(610,570)" name="Button"/>
     <comp lib="0" loc="(50,450)" name="Pin">
       <a name="width" val="4"/>
       <a name="tristate" val="false"/>
@@ -1214,13 +1225,22 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="OPTest"/>
       <a name="labelfont" val="Verdana plain 10"/>
     </comp>
+    <comp lib="0" loc="(610,570)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="Clear"/>
+      <a name="labelfont" val="Verdana plain 10"/>
+    </comp>
     <comp lib="4" loc="(250,450)" name="ROM">
       <a name="addrWidth" val="4"/>
       <a name="dataWidth" val="6"/>
       <a name="contents">addr/data: 4 6
 3 6 9 c 10 12 16 19
-1d 20
+1d 6*0 20
 </a>
+    </comp>
+    <comp lib="0" loc="(120,80)" name="Tunnel">
+      <a name="label" val="Clear"/>
+      <a name="labelfont" val="Verdana plain 10"/>
     </comp>
     <comp lib="0" loc="(540,20)" name="Tunnel">
       <a name="width" val="6"/>
