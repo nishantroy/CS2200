@@ -1,0 +1,1 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -Wall -std=c99 -pedantic  -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/cachesim.dir/cachesim.c.o CMakeFiles/cachesim.dir/cachesim_driver.c.o  -o cachesim  

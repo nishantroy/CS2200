@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/nishantroy/Desktop/Georgia Tech/Fall 2016/CS 2200/Git/Project3/cachesim.c
+cachesim.h
+/Users/nishantroy/Desktop/Georgia Tech/Fall 2016/CS 2200/Git/Project3/cachesim.h
+
+/Users/nishantroy/Desktop/Georgia Tech/Fall 2016/CS 2200/Git/Project3/cachesim.h
+inttypes.h
+-
+stdlib.h
+-
+
+/Users/nishantroy/Desktop/Georgia Tech/Fall 2016/CS 2200/Git/Project3/cachesim_driver.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+unistd.h
+-
+getopt.h
+-
+cachesim.h
+/Users/nishantroy/Desktop/Georgia Tech/Fall 2016/CS 2200/Git/Project3/cachesim.h
+
