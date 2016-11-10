@@ -17,7 +17,7 @@ typedef struct block_t {
         Add another variable here to perform the LRU replacement. Look into using a counter
         variable that will keep track of the oldest block in a set
     */
-    uint8_t time;
+    uint64_t time;
 
 
 } block;
@@ -38,11 +38,18 @@ typedef struct config_t {
 
 /****** Do not modify the below function headers ******/
 static uint64_t get_tag(uint64_t address, uint64_t C, uint64_t B, uint64_t S);
+
 static uint64_t get_index(uint64_t address, uint64_t C, uint64_t B, uint64_t S);
+
 static uint64_t convert_tag(uint64_t tag, uint64_t index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S);
+
 static uint64_t convert_index(uint64_t tag, uint64_t index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S);
+
 static uint64_t convert_tag_l1(uint64_t l2_tag, uint64_t l2_index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S);
+
 static uint64_t convert_index_l1(uint64_t l2_tag, uint64_t l2_index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S);
+
+static uint64_t replaceIndex(uint64_t index2);
 
 /****** You may add Globals and other function headers that you may need below this line ******/
 
@@ -52,11 +59,28 @@ struct config_t c;
 uint64_t blockCount1;
 uint64_t blockCount2;
 
-block* Cache1;
-block** Cache2;
+block *Cache1;
+block **Cache2;
 
 uint64_t timer = 0;
 
+uint64_t replaceIndex(uint64_t index2) {
+    uint64_t ind = NULL;
+    for (int i = 0; i < c.numSets; i++) {
+        if (Cache2[i][index2].valid == 0) {
+            ind = (uint64_t) i;
+        }
+    }
+    if (ind != NULL) {
+        ind = 0;
+        for (int i = 1; i < c.numSets; i++) {
+            if (Cache2[i][index2].time < Cache2[ind][index2].time) {
+                ind = (uint64_t) i;
+            }
+        }
+    }
+    return ind;
+}
 
 /**
  * Subroutine for initializing your cache with the passed in arguments.
@@ -67,8 +91,7 @@ uint64_t timer = 0;
  * @param S The total number of blocks in a line/set of your L2 cache are 2^S
  * @param B The size of your blocks is 2^B bytes
  */
-void cache_init(uint64_t C1, uint64_t C2, uint64_t S, uint64_t B)
-{
+void cache_init(uint64_t C1, uint64_t C2, uint64_t S, uint64_t B) {
     /* 
         Initialize the caches here. I strongly suggest using arrays for representing
         meta data stored in the caches. The block_t struct given above maybe useful
@@ -78,13 +101,18 @@ void cache_init(uint64_t C1, uint64_t C2, uint64_t S, uint64_t B)
     c.C2 = C2;
     c.S = S;
     c.B = B;
-    c.numSets = (uint64_t) (1 << (c.C2 - B - S));
-    
+    c.numSets = (uint64_t) (1 << (C2 - B - S));
+
+
+
     /**************** TODO ******************/
-    uint64_t blockCount1 = (uint64_t) (1 << (c.C1 - B));
-    Cache1 = calloc(blockCount1, (size_t) (1 << c.B));
-    uint64_t blockCount2 = (uint64_t) (1 << c.C2 - B);
-    Cache2 = calloc(blockCount2, (size_t) (1 << c.B));
+    blockCount1 = (uint64_t) (1 << (C1 - B));
+    Cache1 = calloc(blockCount1, sizeof(block));
+    blockCount2 = (uint64_t) (1 << C2 - B);
+    Cache2 = calloc(c.numSets, sizeof(block*));
+    for (int i = 0; i < c.numSets; i++) {
+        Cache2[i] = calloc(S, sizeof(block));
+    }
 
 }
 
@@ -94,9 +122,9 @@ void cache_init(uint64_t C1, uint64_t C2, uint64_t S, uint64_t B)
  * @param address The address that is being accessed
  * @param stats The struct that you are supposed to store the stats in
  */
-void cache_access (char rw, uint64_t address, struct cache_stats_t *stats)
-{
+void cache_access(char rw, uint64_t address, struct cache_stats_t *stats) {
     timer++;
+    stats->accesses++;
     /* 
         Suggested approach:
             -> Find the L1 tag and index of the address that is being passed in to the function
@@ -108,61 +136,149 @@ void cache_access (char rw, uint64_t address, struct cache_stats_t *stats)
      */
 
     /**************** TODO ******************/
-    if (rw == 'r') {
+    if (rw == READ) {
+        stats->reads++;
         uint64_t tag1 = get_tag(address, c.C1, c.B, c.S);
         uint64_t index1 = get_index(address, c.C1, c.B, c.S);
-        uint64_t tag2 = convert_tag(tag1, index1, c.C1, c.C2, c.B, c.S);
-        uint64_t index2 = convert_index(tag1, index1, c.C1, c.C2, c.B, c.S);
+        uint64_t tag2 = get_tag(address, c.C2, c.B, c.S);
+        uint64_t index2 = get_index(address, c.C2, c.B, c.S);
 
-        if (Cache1[index1].valid == 1 ) {
-            if (Cache1[index1].tag == tag1) {
-                //hit
-                //update stats
+        if (Cache1[index1].valid == 1 && Cache1[index1].tag == tag1) {
 
-
-                for ()
-                if (Cache2[index1]->valid == 1 && Cache2[tag2]->tag == tag2) {
-                    Cache2[tag2]->time == timer;
+            for (int i = 0; i < c.numSets; i++) {
+                if (Cache2[i][index2].valid == 1 && Cache2[i][index2].tag == tag2) {
+                    Cache2[i][index2].time = timer;
+                    break;
                 }
-            } else {
-                //Cache 1 is valid, but the tags don't match
             }
 
         } else {
-            //Check L2
-            if (Cache2[tag2]->valid == 1) {
-                if (Cache2[tag2]->tag == tag2) {
+            //L1 Miss
+            stats->l1_read_misses++;
+            int flag = 0;
+
+            for (int i = 0; i < c.numSets; i++) {
+
+                if (Cache2[i][index2].valid == 1 && Cache2[i][index2].tag == tag2) {
                     //L2 Hit
-                    //update stats
+                    flag = 1;
 
-                    Cache2[tag2]->time = timer;
-                    if (Cache1[tag1].valid == 1) {
-                        //Cache1 is valid
+                    Cache2[i][index2].time = timer;
+
+                    if (Cache1[index1].valid == 1 && Cache1[index1].dirty == 1) {
+
+                        //Evict L1
+                        uint64_t etag2 = convert_tag(Cache1[index1].tag, index1, c.C1, c.C2, c.B, c.S);
+                        uint64_t eindex2 = convert_index(Cache1[index1].tag, index1, c.C1, c.C2, c.B, c.S);
+
+                        uint64_t ind = 0;
+                        for (int j = 0; j < c.numSets; j++) {
+                            if (Cache2[j][eindex2].tag == etag2) {
+                                ind = (uint64_t) j;
+                                break;
+                            }
+                        }
+
+                        Cache2[ind][eindex2].dirty = 1;
+                        Cache2[ind][eindex2].valid = 1;
+                        Cache2[ind][eindex2].time = timer;
+
+                        Cache1[index1].tag = tag1;
+                        Cache1[index1].dirty = 0;
+                        Cache1[index1].valid = 1;
+                    } else {
+                        //L1 not dirty
+                        Cache1[index1].tag = tag1;
+                        Cache1[index1].dirty = 0;
+                        Cache1[index1].valid = 1;
                     }
-                } else {
-                    //L2 Miss
 
+                    break;
                 }
-            } else {
-                //L2 Miss
-
             }
 
-        }
+            if (flag == 0) {
+                //L2 Miss
+                //Get LRU
+                uint64_t ind = replaceIndex(index2);
 
+                if (Cache2[ind][index2].dirty == 1) {
+                    //EVICT L2 //Todo: Check with TA
+                    stats->write_backs++;
+
+                    if (Cache1[index1].dirty == 1) {
+                        //Evict Cache2[ind][index2]. Set time, set not dirty, set valid, set tag to tag2
+                        Cache2[ind][index2].dirty = 0;
+                        Cache2[ind][index2].valid = 1;
+                        Cache2[ind][index2].tag = tag2;
+                        Cache2[ind][index2].tag = tag2;
+
+
+
+                    } else {
+                        //Evict Cache2
+                        Cache2[ind][index2].dirty = 0;
+                        Cache2[ind][index2].valid = 1;
+
+                        //Evict L1
+                        uint64_t etag2 = convert_tag(Cache1[index1].tag, index1, c.C1, c.C2, c.B, c.S);
+                        uint64_t eindex2 = convert_index(Cache1[index1].tag, index1, c.C1, c.C2, c.B, c.S);
+
+                        uint64_t ind = 0;
+                        for (int j = 0; j < c.numSets; j++) {
+                            if (Cache2[j][eindex2].tag == etag2) {
+                                ind = (uint64_t) j;
+                                break;
+                            }
+                        }
+
+                        Cache2[ind][eindex2].dirty = 1;
+                        Cache2[ind][eindex2].valid = 1;
+                        Cache2[ind][eindex2].time = timer;
+
+
+
+
+                        Cache1[index1].tag = tag1;
+                    }
+
+                    Cache2[ind][index2].dirty = 0;
+                }
+
+
+                Cache2[ind][index2].valid = 1;
+                Cache2[ind][index2].tag = tag2;
+                Cache2[ind][index2].time = timer;
+
+                if (Cache1[index1].valid == 1 && Cache1[index1].dirty == 1) {
+                    uint64_t etag2 = convert_tag(Cache1[index1].tag, index1, c.C1, c.C2, c.B, c.S);
+                    Cache2[ind][index2].tag = etag2;
+                    Cache2[ind][index2].dirty = 1;
+
+                    Cache1[index1].tag = tag1;
+                    Cache1[index1].dirty = 0;
+                    Cache1[index1].valid = 1;
+                } else {
+                    Cache1[index1].tag = tag1;
+                    Cache1[index1].dirty = 0;
+                    Cache1[index1].valid = 1;
+                }
+            }
+        }
     } else {
         //Writing
+        stats->writes++;
+
     }
 
-
 }
+
 
 /**
  * Subroutine for freeing up memory, and performing any final calculations before the statistics
  * are outputed by the driver
  */
-void cache_cleanup (struct cache_stats_t *stats)
-{
+void cache_cleanup(struct cache_stats_t *stats) {
     /*
         Make sure to free up all the memory you malloc'ed here. To check if you have freed up the
         the memory, run valgrind. For more information, google how to use valgrind.
@@ -181,8 +297,7 @@ void cache_cleanup (struct cache_stats_t *stats)
  * 
  * @return The computed tag
  */
-static uint64_t get_tag(uint64_t address, uint64_t C, uint64_t B, uint64_t S)
-{
+static uint64_t get_tag(uint64_t address, uint64_t C, uint64_t B, uint64_t S) {
     /**************** TODO ******************/
     return (unsigned) address >> C - S;
 }
@@ -197,8 +312,7 @@ static uint64_t get_tag(uint64_t address, uint64_t C, uint64_t B, uint64_t S)
  *
  * @return The computed index
  */
-static uint64_t get_index(uint64_t address, uint64_t C, uint64_t B, uint64_t S)
-{
+static uint64_t get_index(uint64_t address, uint64_t C, uint64_t B, uint64_t S) {
     /**************** TODO ******************/
     uint64_t index = (unsigned) address >> B;
     return (uint64_t) (index && (1 << (C - B - S)));
@@ -227,8 +341,7 @@ static uint64_t get_index(uint64_t address, uint64_t C, uint64_t B, uint64_t S)
  * @param B The size of the block in bits
  * @param S The set associativity of the L2 cache
  */
-static uint64_t convert_tag(uint64_t tag, uint64_t index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S)
-{
+static uint64_t convert_tag(uint64_t tag, uint64_t index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S) {
     uint64_t reconstructed_address = (tag << (C1 - B)) | index;
     return reconstructed_address >> (C2 - B - S);
 }
@@ -244,8 +357,7 @@ static uint64_t convert_tag(uint64_t tag, uint64_t index, uint64_t C1, uint64_t 
  * @param B The size of the block in bits
  * @param S The set associativity of the L2 cache
  */
-static uint64_t convert_index(uint64_t tag, uint64_t index, uint64_t C1, uint64_t C2, uint64_t B,  uint64_t S)
-{
+static uint64_t convert_index(uint64_t tag, uint64_t index, uint64_t C1, uint64_t C2, uint64_t B, uint64_t S) {
     // Reconstructed address without the block offset bits
     uint64_t reconstructed_address = (tag << (C1 - B)) | index;
     // Create index mask for L2 without including the block offset bits
