@@ -1,4 +1,4 @@
-#include "pagetable.h"
+#include "../simulator-src/pagetable.h"
 #include <assert.h>
 /**
  * This function checks the page table of the current process to find
@@ -14,6 +14,19 @@
 uint64_t page_lookup(uint64_t vpn, uint64_t offset, char rw, stats_t *stats)
 {
 	uint64_t pfn = 0;
+//	pte_t mapping = current_pagetable[vpn];
+
+    if (current_pagetable[vpn].valid == 1) {
+        pfn = current_pagetable[vpn].pfn;
+    } else {
+        stats->page_faults++;
+        pfn = page_fault_handler(vpn, rw, stats);
+    }
+
+    if (rw == WRITE) {
+        current_pagetable[vpn].dirty = 1;
+    }
+    current_pagetable[vpn].frequency++;
 
 	// (1) Check the "current_pagetable" at the param VPN to find the mapping
 	// (2) If the mapping does not exist, call the "page_fault_handler" function

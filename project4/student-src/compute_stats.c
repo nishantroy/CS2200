@@ -1,4 +1,4 @@
-#include "stats.h"
+#include "../simulator-src/stats.h"
 
 /** 
  * Use this function to compute the final statistics of the simulation

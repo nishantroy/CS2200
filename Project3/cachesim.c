@@ -226,9 +226,9 @@ void cache_access (char rw, uint64_t address, struct cache_stats_t *stats)
             }
         }
 
-        stats -> l1_miss_rate = (double) (((stats -> l1_read_misses) + (stats -> l1_write_misses)) / (stats -> accesses);
-        stats -> l2_miss_rate = (double) (((stats -> l2_read_misses) + (stats -> l2_write_misses)) / (stats -> accesses);
-        stats -> miss_rate = (double) (((stats -> read_misses) + (stats -> write_misses)) / (stats -> accesses);
+        stats -> l1_miss_rate = (double) (((stats -> l1_read_misses) + (stats -> l1_write_misses)) / (stats -> accesses));
+        stats -> l2_miss_rate = (double) (((stats -> l2_read_misses) + (stats -> l2_write_misses)) / (stats -> accesses));
+        stats -> miss_rate = (double) (((stats -> read_misses) + (stats -> write_misses)) / (stats -> accesses));
 
 
     }

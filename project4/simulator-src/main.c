@@ -1,10 +1,14 @@
 #include "util.h"
 #include "process.h"
+
 #include "pagetable.h"
+
 #include "stats.h"
+
 #include "tlb.h"
 #include "reverselookup.h"
 #include <getopt.h>
+
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
@@ -27,6 +31,7 @@ static int debug_flag = 0;
 
 void sim_access(int pid, char rw, uint64_t address, stats_t *stats)
 {
+
 	if (pid != old_pid) {
 		// Context switch - Clear the TLB
 		tlb_clear();
@@ -96,6 +101,7 @@ int main (int argc, char **argv)
 	printf("Debug Flag: %d\n", debug_flag);
 	printf("\n");
 
+
 	
 	stats_t *stats = malloc(sizeof(stats_t));
 	memset(stats, 0, sizeof(stats_t));
@@ -115,7 +121,7 @@ int main (int argc, char **argv)
 	while (!feof(fin)) {
 		int ret = fscanf(fin, "%d %c %" PRIx64 "\n", &pid, &rw, &address);
 		if (ret == 3) {
-		 	//printf("%d, %c, %" PRIu64 "\n", pid, rw, address);
+		 	printf("%d, %c, %" PRIu64 "\n", pid, rw, address);
 		 	sim_access(pid, rw, address, stats);
 		}
 	}
